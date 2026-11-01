@@ -14,6 +14,9 @@ glimpse(df_day)
 Data_detail(df_hour)
 Data_detail(df_day)
 
+data_codebook(df_hour)
+data_codebook(df_day)
+
 
 df_hour$cnt %>%
   sort() %>%
