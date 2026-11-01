@@ -16,19 +16,33 @@ Data_detail(df_day)
 
 
 df_hour$cnt %>%
-  sort() %>% 
+  sort() %>%
   plot(type = "l")
 
 df_day$cnt %>%
-  sort() %>% 
+  sort() %>%
   plot(type = "l")
-
-
 
 
 # EDA ---------------------------------------------------------------------
 
 df_day |>
   correlation::correlation() |>
-  summary() %>% 
+  summary() %>%
   plot()
+
+
+df_day %>%
+  ggplot() +
+  geom_boxplot(aes(x = cnt, y = temp))
+
+
+# Linear Model ------------------------------------------------------------
+
+lm_baseline_model <- lm(cnt ~ ., df_hour)
+lm_baseline_model |> check_model()
+lm_baseline_model |> check_collinearity()
+lm_baseline_model |> check_outliers()
+lm_baseline_model |> influence.measures()
+lm_baseline_model |> vcov()
+lm_baseline_model |> cooks.distance()
