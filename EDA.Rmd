@@ -1,0 +1,68 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+library(tidyverse)
+library(easystats)
+library(patchwork)
+source("utils_for_group_project.R")
+```
+
+
+```{r}
+df_day %>% data_codebook()
+```
+
+```{r}
+cat_EDA(df_day, cat_col = c(
+  "season", "holiday", "workingday", "weathersit",
+  "yr", "mnth", "weekday"
+))
+```
+
+
+```{r}
+Training %>%
+  correlation::correlation() %>%
+  summary() %>%
+  plot() +
+  theme_ev()
+```
+
+```{r}
+Training %>%
+  ggplot(aes(x = cnt)) +
+  geom_histogram() +
+  Training %>%
+  ggplot(aes(x = cnt)) +
+  geom_density(colour = "red")
+```
+
+```{r}
+cat_col[!cat_col %in% c("yr", "mnth", "weekday")] %>%
+  map(~ ggplot(Training, aes(x = .data[[.x]], y = cnt)) +
+    geom_boxplot() +
+    labs(x = .x)) %>%
+  wrap_plots(ncol = 2)
+```
+
+```{r}
+num_col %>%
+  map(~ ggplot(Training, aes(y = .data[[.x]], x = cnt)) +
+    geom_point() +
+    geom_smooth(method = "lm", color = "red") +
+    labs(x = .x)) %>%
+  wrap_plots(ncol = 2)
+```
+
+```{r}
+```
