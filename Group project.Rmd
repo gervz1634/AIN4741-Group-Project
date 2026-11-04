@@ -1,0 +1,238 @@
+---
+title: "Group project"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+library(tidyverse)
+library(glmnet)
+library(easystats)
+library(patchwork)
+library(ggfortify)
+source("utils_for_group_project.R")
+```
+
+
+# Numerical and Categorical Data
+```{r}
+df_day <- read_csv("bike+sharing+dataset/day.csv")[, -1]
+
+
+cat_col <- c(
+  "season", "holiday", "workingday", "weathersit",
+  "yr", "mnth", "weekday"
+)
+num_col <- c(
+  "temp", "atemp", "hum", "windspeed"
+) # No casual and registered
+
+
+df_pre <- train_test_split(df_day)
+Training <- df_pre$train
+Testing <- df_pre$test
+```
+
+
+# Data cleaning
+## NA values
+From the description of the data set, we know that there are no any NA values.
+
+
+## *dteday*, *casual*, *registered* for  linear model
+Observation:
+ - Introducing *dteday* 
+ - From the description of the data set, *casual*, *registered* are two parts of *cnt* with correlation close to 1.
+ - *mnth* and *season* have a high VIF
+ 
+Insight:
+ - Delete the *dteday* or use shrinkage model
+ - Delete the two *casual* and *registered*
+
+```{r}
+# Outcome
+Training <- Training %>% select(-c(
+  dteday, casual, registered
+))
+
+
+correlation(Training) %>%
+  summary() %>%
+  plot() +
+  theme_ev()
+```
+
+
+## Correlation
+Observation:
+ - *season* and *mnth* show a correlation of 0.83.
+ - The correlation of the two *temp* and *atemp* is equal to 1.
+ 
+Insight:
+ - Feature engineering(heat): A day with high *atemp* and *hum* 
+ 
+```{r}
+correlation(df_day, select = c("season", "mnth"))
+correlation(Training, select = c("temp", "atemp"))
+
+
+# Outcome
+Training <- Training %>%
+  mutate(
+    heat = ifelse(atemp * 50 > 27 & hum * 100 > 60, 1, 0) # It will contain a high correlation if use interaction
+  ) %>%
+  select(-c(atemp)) %>%
+  mutate(heat = as.factor(heat))
+
+
+# Training <- Training %>%
+#   select(-c(mnth, atemp))
+```
+
+
+
+## Multicollinearity
+Observation:
+ - *season* and *mnth* show strong VIF (>10), but *mnth* has a stronger VIF
+ 
+Insight:
+ - deleted the *mnth* to reduced multicollinearity and keep *season* since it contain information relating to the *temp*
+ 
+```{r}
+lm(cnt ~ ., Training) %>%
+  check_collinearity() %>%
+  plot() + theme_ev()
+
+
+correlation(Training) %>%
+  summary() %>%
+  plot() +
+  theme_ev()
+
+
+# Outcome
+Training <- Training %>%
+  select(-c(mnth))
+
+lm(cnt ~ ., Training) %>%
+  check_collinearity() %>%
+  plot() + theme_ev()
+
+
+correlation(Training) %>%
+  summary() %>%
+  plot() +
+  theme_ev()
+```
+
+
+## Small things
+Observation:
+ - Since the *workingday* can be directly derive from *holiday* and *weekday*, it contains no additional information.
+ 
+Insight:
+ - Delete the *workingday*
+ 
+```{r}
+# Outcome
+Training <- Training %>%
+  select(-c(workingday))
+
+
+lm(cnt ~ ., Training) %>%
+  check_collinearity() %>%
+  plot() + theme_ev()
+
+
+correlation(Training) %>%
+  summary() %>%
+  plot() +
+  theme_ev()
+```
+
+
+
+# Linear Model
+## Baseline
+Observation:
+ - 
+ 
+Insight:
+ - 
+ 
+```{r}
+# Outcome
+lm_baseline_model <- lm(cnt ~ ., Training)
+
+lm_baseline_model %>% check_model()
+lm_baseline_model %>% model_performance()
+
+
+```
+
+
+## Subset selection
+Observation:
+ - 
+ 
+Insight:
+ -  
+
+```{r}
+lm_stepwise_model <- lm_baseline_model %>%
+  select_parameters() # stepwise base on AIC
+
+lm_stepwise_model %>% check_model()
+lm_stepwise_model %>% model_performance()
+```
+
+
+## Shrinkage model
+Observation:
+ - 
+ 
+Insight:
+ - 
+
+```{r}
+Training.Lasso <- Training %>%
+  select(-c(cnt)) %>%
+  model.matrix(~ . - 1, data = .)
+cv_fit <- cv.glmnet(
+  x = Training.Lasso,
+  y = Training$cnt,
+  family = "gaussian",
+  alpha = 1, # 1 = LASSO；0 = Ridge
+  nfolds = 10,
+  standardize = TRUE
+)
+autoplot(cv_fit)
+
+
+lm_lasso_model <- glmnet(
+  x = Training.Lasso,
+  y = Training$cnt,
+  family = "gaussian",
+  alpha = 1,
+  lambda = cv_fit$lambda.1se # lambda
+)
+```
+
+
+# Model Comparison
+Observation:
+ - 
+ 
+Insight:
+ - 
+
+```{r}
+
+```
+

@@ -38,6 +38,7 @@ theme_ev <- function(base_size = 12) {
       plot.subtitle = element_text(colour = "grey35", size = base_size - 1),
       plot.caption = element_text(colour = "grey45", size = base_size - 3, hjust = 0),
       strip.text = element_text(face = "bold"),
-      legend.position = "bottom"
+      legend.position = "bottom",
+      axis.text.x = element_text(angle = 35, hjust = 1)
     )
 }
