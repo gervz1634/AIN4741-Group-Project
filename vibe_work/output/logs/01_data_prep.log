@@ -1,0 +1,60 @@
+## 00_setup.R loaded
+   R version      : R version 4.6.1 (2026-06-24 ucrt) 
+   tidyverse      : 2.0.0 
+   easystats      : 0.7.6 
+   patchwork      : 1.3.2 
+
+======================= 01 DATA PREPARATION =======================
+
+Raw dimensions : 731 rows x 16 columns
+Date range     : 2011-01-01 to 2012-12-31 
+Missing values : 0 
+Duplicated rows: 0 
+Calendar days expected: 731 | observed: 731 | gaps: 0 
+
+max |cnt - (casual + registered)| = 0 
+
+occurrence of each categorical level:
+   season : 1 181 2 184 3 188 4 178  | 
+   yr : 0 365 1 366  | 
+   mnth : 1 62 2 57 3 62 4 60 5 62 6 60 7 62 8 62 9 60 10 62 11 60 12 62  | 
+   holiday : 0 710 1 21  | 
+   weekday : 0 105 1 105 2 104 3 104 4 104 5 104 6 105  | 
+   workingday : 0 231 1 500  | 
+   weathersit : 1 463 2 247 3 21  | 
+Analysis data  : 731 rows x 17 columns after cleaning
+Predictors kept: dteday, season, yr, mnth, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed 
+
+Table T01 (codebook) written.
+
+---- Table T02a: descriptive statistics ----
+    variable    kind   n     mean       sd    min       q1   median       q3
+1      atemp numeric 731    0.474    0.163  0.079    0.338    0.487    0.609
+2     casual numeric 731  848.176  686.622  2.000  315.500  713.000 1096.000
+3        cnt numeric 731 4504.349 1937.211 22.000 3152.000 4548.000 5956.000
+4        hum numeric 731    0.628    0.142  0.000    0.520    0.627    0.730
+5 registered numeric 731 3656.172 1560.256 20.000 2497.000 3662.000 4776.500
+6       temp numeric 731    0.495    0.183  0.059    0.337    0.498    0.655
+7  windspeed numeric 731    0.190    0.077  0.022    0.135    0.181    0.233
+       max skewness
+1    0.841   -0.131
+2 3410.000    1.261
+3 8714.000   -0.047
+4    0.973   -0.069
+5 6946.000    0.043
+6    0.862   -0.054
+7    0.507    0.675
+
+---- Table T03: correlations among continuous predictors ----
+  Parameter1 Parameter2      r  CI_low CI_high      t     p
+1       temp      atemp  0.992  0.9904  0.9928 208.27 0e+00
+2       temp        hum  0.127  0.0550  0.1977   3.46 6e-04
+3       temp  windspeed -0.158 -0.2278 -0.0864  -4.32 1e-04
+4      atemp        hum  0.140  0.0682  0.2104   3.82 3e-04
+5      atemp  windspeed -0.184 -0.2528 -0.1126  -5.04 0e+00
+6        hum  windspeed -0.248 -0.3153 -0.1792  -6.93 0e+00
+`geom_smooth()` using formula = 'y ~ x'
+
+Figure F01-F04 written to vibe_work/output/figures 
+
+==================== 01 DATA PREP COMPLETE ========================

@@ -1,0 +1,722 @@
+## 00_setup.R loaded
+   R version      : R version 4.6.1 (2026-06-24 ucrt) 
+   tidyverse      : 2.0.0 
+   easystats      : 0.7.6 
+   patchwork      : 1.3.2 
+
+======================= 02 REGRESSION MODEL =======================
+
+mean of temp over the whole sample = 0.4954  (= 20.31 deg C); used as centring constant
+
+Training set : 512 days ( 2011-01-01 to 2012-05-26 )
+Test set     : 219 days ( 2012-05-27 to 2012-12-31 )
+
+---- 2.1 M0: all 11 candidate predictors ----
+Model matrix is rank deficient. Parameters `workingdayWorking` were not
+  estimable.
+Parameter             | Coefficient |       SE |                 95% CI
+-----------------------------------------------------------------------
+(Intercept)           |    1434.034 |  235.369 | [  971.561,  1896.507]
+season [Summer]       |     626.117 |  160.382 | [  310.984,   941.250]
+season [Fall]         |     980.119 |  233.417 | [  521.480,  1438.758]
+season [Winter]       |    1226.976 |  210.164 | [  814.027,  1639.924]
+yr [2012]             |    1958.628 |   78.491 | [ 1804.402,  2112.855]
+mnth [Feb]            |     119.997 |  121.719 | [ -119.167,   359.161]
+mnth [Mar]            |     585.586 |  144.603 | [  301.457,   869.716]
+mnth [Apr]            |     620.225 |  221.651 | [  184.705,  1055.745]
+mnth [May]            |     882.812 |  245.693 | [  400.052,  1365.571]
+mnth [Jun]            |     491.492 |  298.520 | [  -95.066,  1078.051]
+mnth [Jul]            |    -376.732 |  356.745 | [-1077.696,   324.233]
+mnth [Aug]            |    -103.532 |  344.304 | [ -780.051,   572.986]
+mnth [Sep]            |     528.437 |  305.311 | [  -71.464,  1128.339]
+mnth [Oct]            |     606.876 |  276.400 | [   63.782,  1149.970]
+mnth [Nov]            |     301.938 |  269.805 | [ -228.199,   832.075]
+mnth [Dec]            |     385.309 |  206.678 | [  -20.790,   791.408]
+holiday [Yes]         |    -415.038 |  189.663 | [ -787.705,   -42.371]
+weekday [Mon]         |      52.923 |  110.888 | [ -164.959,   270.805]
+weekday [Tue]         |     169.249 |  107.956 | [  -42.874,   381.371]
+weekday [Wed]         |     108.041 |  108.394 | [ -104.940,   321.022]
+weekday [Thu]         |     217.914 |  107.978 | [    5.750,   430.078]
+weekday [Fri]         |     303.442 |  107.840 | [   91.549,   515.334]
+weekday [Sat]         |     272.786 |  106.931 | [   62.679,   482.893]
+weathersit [Mist]     |    -398.593 |   77.349 | [ -550.574,  -246.612]
+weathersit [RainSnow] |   -1716.790 |  186.164 | [-2082.581, -1350.998]
+temp                  |    2877.628 | 2387.651 | [-1813.838,  7569.094]
+atemp                 |    2169.352 | 2544.334 | [-2829.978,  7168.683]
+hum                   |   -1421.535 |  279.470 | [-1970.661,  -872.408]
+windspeed             |   -2698.373 |  433.931 | [-3550.998, -1845.748]
+
+Parameter             | t(483) |      p
+---------------------------------------
+(Intercept)           |  6.093 | < .001
+season [Summer]       |  3.904 | < .001
+season [Fall]         |  4.199 | < .001
+season [Winter]       |  5.838 | < .001
+yr [2012]             | 24.953 | < .001
+mnth [Feb]            |  0.986 | 0.325 
+mnth [Mar]            |  4.050 | < .001
+mnth [Apr]            |  2.798 | 0.005 
+mnth [May]            |  3.593 | < .001
+mnth [Jun]            |  1.646 | 0.100 
+mnth [Jul]            | -1.056 | 0.291 
+mnth [Aug]            | -0.301 | 0.764 
+mnth [Sep]            |  1.731 | 0.084 
+mnth [Oct]            |  2.196 | 0.029 
+mnth [Nov]            |  1.119 | 0.264 
+mnth [Dec]            |  1.864 | 0.063 
+holiday [Yes]         | -2.188 | 0.029 
+weekday [Mon]         |  0.477 | 0.633 
+weekday [Tue]         |  1.568 | 0.118 
+weekday [Wed]         |  0.997 | 0.319 
+weekday [Thu]         |  2.018 | 0.044 
+weekday [Fri]         |  2.814 | 0.005 
+weekday [Sat]         |  2.551 | 0.011 
+weathersit [Mist]     | -5.153 | < .001
+weathersit [RainSnow] | -9.222 | < .001
+temp                  |  1.205 | 0.229 
+atemp                 |  0.853 | 0.394 
+hum                   | -5.087 | < .001
+windspeed             | -6.218 | < .001
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+-- singularity check: base R `alias` and easystats `check_singularity` --
+                  (Intercept) seasonSummer seasonFall seasonWinter yr2012
+workingdayWorking  0           0            0          0            0    
+                  mnthFeb mnthMar mnthApr mnthMay mnthJun mnthJul mnthAug
+workingdayWorking  0       0       0       0       0       0       0     
+                  mnthSep mnthOct mnthNov mnthDec holidayYes weekdayMon
+workingdayWorking  0       0       0       0      -1          1        
+                  weekdayTue weekdayWed weekdayThu weekdayFri weekdaySat
+workingdayWorking  1          1          1          1          0        
+                  weathersitMist weathersitRainSnow temp atemp hum windspeed
+workingdayWorking  0              0                  0    0     0   0       
+model-matrix columns: 30  | rank: 29  | exact linear dependencies: 1 
+[1] FALSE
+
+WHY: workingday = 1 exactly when weekday is Mon-Fri AND holiday = 0.
+      Once the full weekday factor and the holiday dummy are in the model,
+      workingday is a deterministic function of the other columns (a
+      'dummy-variable trap'), so lm() silently drops one coefficient.
+
+---- 3.1 M1: M0 without the aliased workingday dummy ----
+Parameter             | Coefficient |       SE |                 95% CI
+-----------------------------------------------------------------------
+(Intercept)           |    1434.034 |  235.369 | [  971.561,  1896.507]
+season [Summer]       |     626.117 |  160.382 | [  310.984,   941.250]
+season [Fall]         |     980.119 |  233.417 | [  521.480,  1438.758]
+season [Winter]       |    1226.976 |  210.164 | [  814.027,  1639.924]
+yr [2012]             |    1958.628 |   78.491 | [ 1804.402,  2112.855]
+mnth [Feb]            |     119.997 |  121.719 | [ -119.167,   359.161]
+mnth [Mar]            |     585.586 |  144.603 | [  301.457,   869.716]
+mnth [Apr]            |     620.225 |  221.651 | [  184.705,  1055.745]
+mnth [May]            |     882.812 |  245.693 | [  400.052,  1365.571]
+mnth [Jun]            |     491.492 |  298.520 | [  -95.066,  1078.051]
+mnth [Jul]            |    -376.732 |  356.745 | [-1077.696,   324.233]
+mnth [Aug]            |    -103.532 |  344.304 | [ -780.051,   572.986]
+mnth [Sep]            |     528.437 |  305.311 | [  -71.464,  1128.339]
+mnth [Oct]            |     606.876 |  276.400 | [   63.782,  1149.970]
+mnth [Nov]            |     301.938 |  269.805 | [ -228.199,   832.075]
+mnth [Dec]            |     385.309 |  206.678 | [  -20.790,   791.408]
+holiday [Yes]         |    -415.038 |  189.663 | [ -787.705,   -42.371]
+weekday [Mon]         |      52.923 |  110.888 | [ -164.959,   270.805]
+weekday [Tue]         |     169.249 |  107.956 | [  -42.874,   381.371]
+weekday [Wed]         |     108.041 |  108.394 | [ -104.940,   321.022]
+weekday [Thu]         |     217.914 |  107.978 | [    5.750,   430.078]
+weekday [Fri]         |     303.442 |  107.840 | [   91.549,   515.334]
+weekday [Sat]         |     272.786 |  106.931 | [   62.679,   482.893]
+weathersit [Mist]     |    -398.593 |   77.349 | [ -550.574,  -246.612]
+weathersit [RainSnow] |   -1716.790 |  186.164 | [-2082.581, -1350.998]
+temp                  |    2877.628 | 2387.651 | [-1813.838,  7569.094]
+atemp                 |    2169.352 | 2544.334 | [-2829.978,  7168.683]
+hum                   |   -1421.535 |  279.470 | [-1970.661,  -872.408]
+windspeed             |   -2698.373 |  433.931 | [-3550.998, -1845.748]
+
+Parameter             | t(483) |      p
+---------------------------------------
+(Intercept)           |  6.093 | < .001
+season [Summer]       |  3.904 | < .001
+season [Fall]         |  4.199 | < .001
+season [Winter]       |  5.838 | < .001
+yr [2012]             | 24.953 | < .001
+mnth [Feb]            |  0.986 | 0.325 
+mnth [Mar]            |  4.050 | < .001
+mnth [Apr]            |  2.798 | 0.005 
+mnth [May]            |  3.593 | < .001
+mnth [Jun]            |  1.646 | 0.100 
+mnth [Jul]            | -1.056 | 0.291 
+mnth [Aug]            | -0.301 | 0.764 
+mnth [Sep]            |  1.731 | 0.084 
+mnth [Oct]            |  2.196 | 0.029 
+mnth [Nov]            |  1.119 | 0.264 
+mnth [Dec]            |  1.864 | 0.063 
+holiday [Yes]         | -2.188 | 0.029 
+weekday [Mon]         |  0.477 | 0.633 
+weekday [Tue]         |  1.568 | 0.118 
+weekday [Wed]         |  0.997 | 0.319 
+weekday [Thu]         |  2.018 | 0.044 
+weekday [Fri]         |  2.814 | 0.005 
+weekday [Sat]         |  2.551 | 0.011 
+weathersit [Mist]     | -5.153 | < .001
+weathersit [RainSnow] | -9.222 | < .001
+temp                  |  1.205 | 0.229 
+atemp                 |  0.853 | 0.394 
+hum                   | -5.087 | < .001
+windspeed             | -6.218 | < .001
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+---- 3.2 Variance Inflation Factors of M1 (T04) ----
+# Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF       VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+         yr 1.55 [  1.40,   1.74]     1.24      0.65     [0.57, 0.71]
+    holiday 1.17 [  1.09,   1.32]     1.08      0.85     [0.75, 0.92]
+    weekday 1.21 [  1.12,   1.36]     1.02      0.83     [0.74, 0.89]
+ weathersit 1.93 [  1.72,   2.19]     1.18      0.52     [0.46, 0.58]
+        hum 2.22 [  1.97,   2.53]     1.49      0.45     [0.39, 0.51]
+  windspeed 1.41 [  1.29,   1.59]     1.19      0.71     [0.63, 0.78]
+
+High Correlation
+
+   Term    VIF       VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+ season 219.80 [186.89, 258.53]     2.46  4.55e-03     [0.00, 0.01]
+   mnth 736.74 [626.26, 866.76]     1.35  1.36e-03     [0.00, 0.00]
+   temp 222.94 [189.57, 262.23]    14.93  4.49e-03     [0.00, 0.01]
+  atemp 203.30 [172.87, 239.12]    14.26  4.92e-03     [0.00, 0.01]
+
+---- 3.3 temp vs atemp ----
+correlation ................. 0.9964 
+VIF(temp) ................... 222.94 
+VIF(atemp) .................. 203.3 
+
+A model with only temp and atemp: both slopes become unreliable and the
+ temperature coefficient even changes sign -> the two variables destroy each
+ other's information:
+Parameter   | Coefficient |       SE |                  95% CI | t(509) |      p
+--------------------------------------------------------------------------------
+(Intercept) |     656.003 |  199.982 | [   263.112,  1048.894] |  3.280 | 0.001 
+temp        |   -9703.612 | 3555.414 | [-16688.705, -2718.520] | -2.729 | 0.007 
+atemp       |   17064.740 | 3967.513 | [  9270.023, 24859.458] |  4.301 | < .001
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+---- 3.4 season vs mnth ----
+cross-tabulation test of independence between season and month:
+
+	Pearson's Chi-squared test
+
+data:  table(train$season, train$mnth)
+X-squared = 1261.9, df = 33, p-value < 2.2e-16
+
+# Comparison of Model Performance Indices
+
+Name | Model |  AIC (weights) | AICc (weights) |  BIC (weights) |    R2
+-----------------------------------------------------------------------
+..1  |    lm | 8148.2 (<.001) | 8149.6 (<.001) | 8224.5 (0.972) | 0.823
+..2  |    lm | 8144.0 (<.001) | 8146.8 (<.001) | 8254.1 (<.001) | 0.830
+..3  |    lm | 8108.7 (>.999) | 8112.3 (>.999) | 8231.6 (0.028) | 0.843
+
+Name | R2 (adj.) |    RMSE |   Sigma
+------------------------------------
+..1  |     0.818 | 667.241 | 678.602
+..2  |     0.822 | 654.163 | 670.744
+..3  |     0.835 | 628.326 | 646.245
+
+---- 4.1 M2: candidate pool after remediation ----
+Parameter             | Coefficient |      SE |                 95% CI | t(495) |      p
+----------------------------------------------------------------------------------------
+(Intercept)           |    1460.462 | 222.720 | [ 1022.869,  1898.055] |  6.557 | < .001
+season [Summer]       |    1046.301 |  99.872 | [  850.075,  1242.527] | 10.476 | < .001
+season [Fall]         |     662.569 | 151.819 | [  364.279,   960.858] |  4.364 | < .001
+season [Winter]       |    1419.727 | 106.197 | [ 1211.074,  1628.379] | 13.369 | < .001
+yr [2012]             |    1972.540 |  76.012 | [ 1823.194,  2121.885] | 25.950 | < .001
+holiday [Yes]         |    -463.742 | 194.232 | [ -845.362,   -82.122] | -2.388 | 0.017 
+weekday [Mon]         |      55.850 | 116.129 | [ -172.317,   284.017] |  0.481 | 0.631 
+weekday [Tue]         |     179.417 | 112.881 | [  -42.368,   401.202] |  1.589 | 0.113 
+weekday [Wed]         |      96.026 | 113.371 | [ -126.721,   318.773] |  0.847 | 0.397 
+weekday [Thu]         |     240.286 | 112.941 | [   18.383,   462.189] |  2.128 | 0.034 
+weekday [Fri]         |     316.073 | 113.058 | [   93.940,   538.206] |  2.796 | 0.005 
+weekday [Sat]         |     278.589 | 112.202 | [   58.139,   499.040] |  2.483 | 0.013 
+weathersit [Mist]     |    -400.674 |  80.082 | [ -558.016,  -243.332] | -5.003 | < .001
+weathersit [RainSnow] |   -1691.455 | 193.730 | [-2072.090, -1310.819] | -8.731 | < .001
+temp                  |    5087.515 | 295.594 | [ 4506.742,  5668.288] | 17.211 | < .001
+hum                   |   -1142.268 | 278.243 | [-1688.951,  -595.584] | -4.105 | < .001
+windspeed             |   -2740.262 | 419.771 | [-3565.015, -1915.509] | -6.528 | < .001
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+VIF of M2 (T05):
+# Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF   VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+     season 4.02 [3.49, 4.67]     1.26      0.25     [0.21, 0.29]
+         yr 1.31 [1.20, 1.48]     1.15      0.76     [0.67, 0.83]
+    holiday 1.12 [1.05, 1.28]     1.06      0.90     [0.78, 0.95]
+    weekday 1.16 [1.08, 1.32]     1.01      0.86     [0.76, 0.92]
+ weathersit 1.85 [1.65, 2.11]     1.17      0.54     [0.47, 0.60]
+       temp 3.10 [2.71, 3.58]     1.76      0.32     [0.28, 0.37]
+        hum 1.99 [1.77, 2.28]     1.41      0.50     [0.44, 0.56]
+  windspeed 1.20 [1.11, 1.36]     1.10      0.83     [0.74, 0.90]
+
+---- 4.2 stepwise, both directions, AIC ----
+Start:  AIC=6693.23
+cnt ~ season + yr + holiday + weekday + weathersit + temp + hum + 
+    windspeed
+
+             Df Sum of Sq       RSS    AIC
+<none>                    227947947 6693.2
+- weekday     6   6121614 234069561 6694.8
+- holiday     1   2625086 230573033 6697.1
+- hum         1   7760979 235708926 6708.4
+- windspeed   1  19624075 247572022 6733.5
+- weathersit  2  37081952 265029899 6766.4
+- season      3 115135203 343083150 6896.6
+- temp        1 136411659 364359606 6931.4
+- yr          1 310112795 538060742 7131.0
+
+---- 4.3 stepwise, both directions, BIC (k = log n) ----
+Start:  AIC=6765.28
+cnt ~ season + yr + holiday + weekday + weathersit + temp + hum + 
+    windspeed
+
+             Df Sum of Sq       RSS    AIC
+- weekday     6   6121614 234069561 6741.4
+- holiday     1   2625086 230573033 6764.9
+<none>                    227947947 6765.3
+- hum         1   7760979 235708926 6776.2
+- windspeed   1  19624075 247572022 6801.3
+- weathersit  2  37081952 265029899 6830.0
+- season      3 115135203 343083150 6955.9
+- temp        1 136411659 364359606 6999.2
+- yr          1 310112795 538060742 7198.8
+
+Step:  AIC=6741.42
+cnt ~ season + yr + holiday + weathersit + temp + hum + windspeed
+
+             Df Sum of Sq       RSS    AIC
+<none>                    234069561 6741.4
+- holiday     1   3768391 237837952 6743.4
+- hum         1   9350726 243420287 6755.2
++ weekday     6   6121614 227947947 6765.3
+- windspeed   1  20139108 254208669 6777.4
+- weathersit  2  36145756 270215317 6802.5
+- season      3 116093017 350162578 6928.9
+- temp        1 138687247 372756808 6973.4
+- yr          1 309241970 543311531 7166.3
+
+---- 4.4 forward selection from the intercept, AIC ----
+Start:  AIC=7549
+cnt ~ 1
+
+             Df Sum of Sq        RSS    AIC
++ temp        1 500293924  790551770 7300.0
++ season      3 398994571  891851122 7365.7
++ yr          1 197154829 1093690865 7466.1
++ weathersit  2 129245938 1161599756 7499.0
++ windspeed   1  48977355 1241868339 7531.2
++ hum         1   9876664 1280969030 7547.1
++ holiday     1   6521938 1284323756 7548.4
+<none>                    1290845694 7549.0
++ weekday     6   8488489 1282357204 7557.6
+
+Step:  AIC=7299.96
+cnt ~ temp
+
+             Df Sum of Sq       RSS    AIC
++ yr          1 335670563 454881207 7019.0
++ season      3 100126804 690424966 7236.6
++ weathersit  2  96291824 694259946 7237.5
++ hum         1  55830401 734721369 7264.5
++ windspeed   1  15479993 775071777 7291.8
++ holiday     1   3400701 787151069 7299.8
+<none>                    790551770 7300.0
++ weekday     6   9402781 781148989 7305.8
+
+Step:  AIC=7018.98
+cnt ~ temp + yr
+
+             Df Sum of Sq       RSS    AIC
++ season      3  97869138 357012068 6900.9
++ weathersit  2  72928937 381952269 6933.5
++ windspeed   1  28633177 426248029 6987.7
++ hum         1  24732803 430148403 6992.4
++ holiday     1   2989464 451891742 7017.6
+<none>                    454881207 7019.0
++ weekday     6   9987080 444894126 7019.6
+
+Step:  AIC=6900.94
+cnt ~ temp + yr + season
+
+             Df Sum of Sq       RSS    AIC
++ weathersit  2  95576053 261436016 6745.4
++ hum         1  44554343 312457726 6834.7
++ windspeed   1  20389766 336622303 6872.8
++ holiday     1   2611451 354400618 6899.2
++ weekday     6   9240337 347771731 6899.5
+<none>                    357012068 6900.9
+
+Step:  AIC=6745.41
+cnt ~ temp + yr + season + weathersit
+
+            Df Sum of Sq       RSS    AIC
++ windspeed  1  14524929 246911087 6718.1
++ holiday    1   4097875 257338141 6739.3
++ weekday    6   8822537 252613478 6739.8
++ hum        1   2876439 258559577 6741.7
+<none>                   261436016 6745.4
+
+Step:  AIC=6718.14
+cnt ~ temp + yr + season + weathersit + windspeed
+
+          Df Sum of Sq       RSS    AIC
++ hum      1   9073134 237837952 6701.0
++ weekday  6   8865077 238046009 6711.4
++ holiday  1   3490799 243420287 6712.9
+<none>                 246911087 6718.1
+
+Step:  AIC=6700.97
+cnt ~ temp + yr + season + weathersit + windspeed + hum
+
+          Df Sum of Sq       RSS    AIC
++ holiday  1   3768391 234069561 6694.8
++ weekday  6   7264920 230573033 6697.1
+<none>                 237837952 6701.0
+
+Step:  AIC=6694.8
+cnt ~ temp + yr + season + weathersit + windspeed + hum + holiday
+
+          Df Sum of Sq       RSS    AIC
++ weekday  6   6121614 227947947 6693.2
+<none>                 234069561 6694.8
+
+Step:  AIC=6693.23
+cnt ~ temp + yr + season + weathersit + windspeed + hum + holiday + 
+    weekday
+
+
+formula selected by AIC (both)  : cnt ~ season + yr + holiday + weekday + weathersit + temp + hum +      windspeed 
+formula selected by BIC (both)  : cnt ~ season + yr + holiday + weathersit + temp + hum + windspeed 
+formula selected by forward AIC : cnt ~ temp + yr + season + weathersit + windspeed + hum + holiday +      weekday 
+
+---- 4.5 interaction candidates built on the AIC-selected subset ----
+# Comparison of Model Performance Indices
+
+Name   | Model |  AIC (weights) | AICc (weights) |  BIC (weights) |    R2
+-------------------------------------------------------------------------
+M_aic  |    lm | 8148.2 (<.001) | 8149.6 (<.001) | 8224.5 (<.001) | 0.823
+M_int1 |    lm | 8065.8 (>.999) | 8067.6 (>.999) | 8154.8 (>.999) | 0.851
+M_int2 |    lm | 8150.5 (<.001) | 8152.2 (<.001) | 8235.3 (<.001) | 0.824
+M_int3 |    lm | 8136.0 (<.001) | 8137.6 (<.001) | 8216.6 (<.001) | 0.828
+
+Name   | R2 (adj.) |    RMSE |   Sigma
+--------------------------------------
+M_aic  |     0.818 | 667.241 | 678.602
+M_int1 |     0.846 | 612.020 | 624.336
+M_int2 |     0.818 | 666.111 | 678.826
+M_int3 |     0.822 | 658.070 | 669.951
+
+Nested F-test for temp:season
+Analysis of Variance Table
+
+Model 1: cnt ~ season + yr + holiday + weekday + weathersit + temp + hum + 
+    windspeed
+Model 2: cnt ~ season + yr + holiday + weekday + weathersit + temp + hum + 
+    windspeed + season:temp
+  Res.Df       RSS Df Sum of Sq     F    Pr(>F)    
+1    495 227947947                                 
+2    492 191779254  3  36168692 30.93 < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+the temperature slope implied by the interaction model, per season
+per unit of normalised temp (41 deg C):
+ Spring  Summer    Fall  Winter 
+ 6808.8  5454.1 -3000.0  5390.3 
+per degree Celsius:
+Spring Summer   Fall Winter 
+ 166.1  133.0  -73.2  131.5 
+
+---- 5.1 Table T06: candidate model comparison ----
+                         Name Model  AIC AIC_wt AICc AICc_wt  BIC BIC_wt    R2
+1 M0 all predictors (aliased)    lm 8110      0 8114       0 8237      0 0.844
+2         M1 minus workingday    lm 8110      0 8114       0 8237      0 0.844
+3 M2 additive pool (ADDITIVE)    lm 8148      0 8150       0 8225      0 0.823
+4             M3 stepwise AIC    lm 8148      0 8150       0 8225      0 0.823
+5             M4 stepwise BIC    lm 8150      0 8150       0 8201      0 0.819
+6              M5 forward AIC    lm 8148      0 8150       0 8225      0 0.823
+7    M6 atemp instead of temp    lm 8151      0 8153       0 8228      0 0.822
+8         M7 season+mnth both    lm 8109      0 8112       0 8232      0 0.843
+9 M8 M2 + season:temp (FINAL)    lm 8066      1 8068       1 8155      1 0.851
+  R2_adjusted RMSE RMSE_oos MAE_oos R2_oos MAPE_oos medAPE_oos CV_RMSE CV_MAE
+1       0.835  628     1062     824  0.588     93.1      10.75     915    687
+2       0.835  628     1062     824  0.588     93.1      10.75     915    687
+3       0.818  667     1081     826  0.574     90.8      10.12     904    667
+4       0.818  667     1081     826  0.574     90.8      10.12     904    667
+5       0.815  676     1091     839  0.565     93.1      10.14     911    670
+6       0.818  667     1081     826  0.574     90.8      10.12     904    667
+7       0.817  669     1092     839  0.565     92.8      10.34     912    670
+8       0.835  628     1065     825  0.586     92.4      11.08     914    687
+9       0.846  612      967     749  0.659     84.3       9.82     844    639
+
+=========== FINAL REGRESSION MODEL ===========
+formula : cnt ~ season + yr + holiday + weekday + weathersit + temp_c +      hum + windspeed + season:temp_c 
+temp_c  : temp - 0.4954  (i.e. temperature in deg C minus 20.31 deg C)
+
+Parameter                | Coefficient |        SE |                    95% CI
+------------------------------------------------------------------------------
+(Intercept)              |   4623.3370 |  243.5489 | [  4144.8128,  5101.8612]
+season [Summer]          |    714.3241 |  116.0020 | [   486.4037,   942.2446]
+season [Fall]            |   1979.3712 |  228.1628 | [  1531.0775,  2427.6649]
+season [Winter]          |   1115.1502 |  141.5143 | [   837.1033,  1393.1970]
+yr [2012]                |   1911.8391 |   71.2500 | [  1771.8473,  2051.8308]
+holiday [Yes]            |   -452.2916 |  179.0548 | [  -804.0981,  -100.4852]
+weekday [Mon]            |     37.2062 |  106.9059 | [  -172.8421,   247.2545]
+weekday [Tue]            |    159.4687 |  103.9442 | [   -44.7606,   363.6980]
+weekday [Wed]            |     97.8690 |  104.3328 | [  -107.1240,   302.8619]
+weekday [Thu]            |    202.4153 |  104.0413 | [    -2.0048,   406.8354]
+weekday [Fri]            |    277.7346 |  104.2392 | [    72.9258,   482.5435]
+weekday [Sat]            |    262.0555 |  103.3170 | [    59.0586,   465.0524]
+weathersit [Mist]        |   -421.5082 |   74.2067 | [  -567.3092,  -275.7071]
+weathersit [RainSnow]    |  -1770.3312 |  178.8998 | [ -2121.8331, -1418.8292]
+temp c                   |   6808.8031 |  475.6689 | [  5874.2102,  7743.3961]
+hum                      |  -1508.1509 |  258.8509 | [ -2016.7405,  -999.5613]
+windspeed                |  -2925.6765 |  389.4205 | [ -3690.8089, -2160.5441]
+season [Summer] × temp c |  -1354.7491 |  632.0706 | [ -2596.6397,  -112.8584]
+season [Fall] × temp c   |  -9808.8473 | 1028.5929 | [-11829.8240, -7787.8707]
+season [Winter] × temp c |  -1418.5203 |  782.5554 | [ -2956.0832,   119.0425]
+
+Parameter                |  t(492) |      p
+-------------------------------------------
+(Intercept)              | 18.9832 | < .001
+season [Summer]          |  6.1579 | < .001
+season [Fall]            |  8.6753 | < .001
+season [Winter]          |  7.8801 | < .001
+yr [2012]                | 26.8328 | < .001
+holiday [Yes]            | -2.5260 | 0.012 
+weekday [Mon]            |  0.3480 | 0.728 
+weekday [Tue]            |  1.5342 | 0.126 
+weekday [Wed]            |  0.9380 | 0.349 
+weekday [Thu]            |  1.9455 | 0.052 
+weekday [Fri]            |  2.6644 | 0.008 
+weekday [Sat]            |  2.5364 | 0.012 
+weathersit [Mist]        | -5.6802 | < .001
+weathersit [RainSnow]    | -9.8957 | < .001
+temp c                   | 14.3142 | < .001
+hum                      | -5.8263 | < .001
+windspeed                | -7.5129 | < .001
+season [Summer] × temp c | -2.1434 | 0.033 
+season [Fall] × temp c   | -9.5362 | < .001
+season [Winter] × temp c | -1.8127 | 0.070 
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+same fit as the non-centred version? R2: 0.851431 vs 0.851431 | identical fitted values: TRUE 
+Model has interaction terms. VIFs might be inflated.
+  Try to center the variables used for the interaction, or check
+  multicollinearity among predictors of a model without interaction terms.
+
+VIF of the final model (T05b):
+# Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF     VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+         yr 1.36 [ 1.25,  1.54]     1.17      0.73     [0.65, 0.80]
+    holiday 1.12 [ 1.05,  1.28]     1.06      0.89     [0.78, 0.95]
+    weekday 1.18 [ 1.10,  1.34]     1.01      0.85     [0.75, 0.91]
+ weathersit 1.88 [ 1.68,  2.14]     1.17      0.53     [0.47, 0.60]
+        hum 2.04 [ 1.81,  2.33]     1.43      0.49     [0.43, 0.55]
+  windspeed 1.22 [ 1.13,  1.38]     1.11      0.82     [0.72, 0.89]
+
+Moderate Correlation
+
+   Term  VIF     VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+ temp_c 9.49 [ 8.12, 11.11]     3.08      0.11     [0.09, 0.12]
+
+High Correlation
+
+          Term   VIF     VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+        season 41.45 [35.20, 48.83]     1.86      0.02     [0.02, 0.03]
+ season:temp_c 37.24 [31.63, 43.86]     6.10      0.03     [0.02, 0.03]
+# Indices of model performance
+
+AIC    |   AICc |    BIC |    R2 | R2 (adj.) |    RMSE |   Sigma
+----------------------------------------------------------------
+8065.8 | 8067.6 | 8154.8 | 0.851 |     0.846 | 612.020 | 624.336
+
+-- easystats normality --
+Warning: Non-normality of residuals detected (p < .001).
+
+-- easystats heteroscedasticity --
+Warning: Heteroscedasticity (non-constant error variance) detected (p = 0.008).
+
+-- easystats autocorrelation --
+Warning: Autocorrelated residuals detected (p < .001).
+---- 6.3 diagnostic tests computed in base R ----
+Shapiro-Wilk W              : 0.9704  p = 1.19e-08 
+Breusch-Pagan LM            : 59.025  df = 19  p = 5.51e-06 
+Durbin-Watson statistic     : 1.3795  (2 = no autocorrelation)
+Ljung-Box Q(14) on residuals: 130.36  p = <2e-16 
+residuals with |z| > 3      : 8 
+largest Cook's distance     : 0.0737 
+
+---- 6.3 diagnostic summary (T09) ----
+                                      check statistic   p_value
+1   Shapiro-Wilk normality of residuals (W)    0.9704 1.188e-08
+2 Breusch-Pagan test for heteroscedasticity   59.0250 5.514e-06
+3              Ljung-Box Q(14) on residuals  130.3624 0.000e+00
+4                   Durbin-Watson statistic    1.3795        NA
+5            Residual outliers with |z| > 3    8.0000        NA
+6                   Largest Cook's distance    0.0737        NA
+7     Maximum VIF of the additive core (M2)    4.0210        NA
+8            Maximum VIF of the final model   41.4460        NA
+
+---- 6.4 the same regression with AR(1) errors (base stats::arima) ----
+AR(1) coefficient = 0.3296  | log-likelihood = -3984.49 
+OLS standard errors vs AR(1)-error standard errors:
+                  term coef_ols se_ols se_ar1  t_ols   t_ar1
+1          (Intercept)   4623.3  243.5  250.1 18.983  18.489
+2         seasonSummer    714.3  116.0  142.8  6.158   5.003
+3           seasonFall   1979.4  228.2  287.4  8.675   6.888
+4         seasonWinter   1115.2  141.5  175.8  7.880   6.343
+5               yr2012   1911.8   71.2   97.1 26.833  19.692
+6           holidayYes   -452.3  179.1  158.6 -2.526  -2.852
+7           weekdayMon     37.2  106.9   86.8  0.348   0.429
+8           weekdayTue    159.5  103.9   96.6  1.534   1.651
+9           weekdayWed     97.9  104.3  100.3  0.938   0.976
+10          weekdayThu    202.4  104.0  100.1  1.946   2.023
+11          weekdayFri    277.7  104.2   96.8  2.664   2.869
+12          weekdaySat    262.1  103.3   83.5  2.536   3.139
+13      weathersitMist   -421.5   74.2   67.3 -5.680  -6.261
+14  weathersitRainSnow  -1770.3  178.9  167.1 -9.896 -10.596
+15              temp_c   6808.8  475.7  552.3 14.314  12.328
+16                 hum  -1508.2  258.9  256.8 -5.826  -5.872
+17           windspeed  -2925.7  389.4  370.2 -7.513  -7.903
+18 seasonSummer:temp_c  -1354.7  632.1  760.6 -2.143  -1.781
+19   seasonFall:temp_c  -9808.8 1028.6 1282.8 -9.536  -7.646
+20 seasonWinter:temp_c  -1418.5  782.6  956.0 -1.813  -1.484
+For confidence bands, please install `qqplotr`.
+Ignoring unknown labels:
+• size : ""
+Ignoring unknown labels:
+• size : ""
+
+=========== PREDICTION FOR 2 JANUARY 2013 ===========
+
+---- 7.1 observed weather at DCA on 2 January 2013 (24 hourly reports) ----
+  n_obs temp_C atemp_C hum_pct wind_kmh precip_in min_vsby
+1    24   2.04   -1.69    47.9     14.6         0       10
+
+the 17:00 report (17:52 local time):
+  n_obs temp_C atemp_C hum_pct wind_kmh
+1     1   1.67   -1.54    41.5     11.1
+
+final model refitted on all 731 days:
+Parameter                | Coefficient |       SE |                    95% CI
+-----------------------------------------------------------------------------
+(Intercept)              |   4634.7471 | 245.9676 | [  4151.8373,  5117.6568]
+season [Summer]          |    788.4316 | 130.4710 | [   532.2770,  1044.5862]
+season [Fall]            |   2571.4769 | 205.1018 | [  2168.7993,  2974.1544]
+season [Winter]          |   1425.6317 | 136.0040 | [  1158.6142,  1692.6492]
+yr [2012]                |   2002.8689 |  54.1369 | [  1896.5815,  2109.1563]
+holiday [Yes]            |   -596.9097 | 166.1475 | [  -923.1080,  -270.7114]
+weekday [Mon]            |    174.9585 | 101.9774 | [   -25.2542,   375.1713]
+weekday [Tue]            |    270.6409 |  99.6239 | [    75.0487,   466.2331]
+weekday [Wed]            |    345.6940 |  99.8583 | [   149.6416,   541.7465]
+weekday [Thu]            |    366.6504 |  99.9006 | [   170.5149,   562.7859]
+weekday [Fri]            |    420.1396 |  99.9624 | [   223.8828,   616.3965]
+weekday [Sat]            |    444.1058 |  99.3098 | [   249.1304,   639.0813]
+weathersit [Mist]        |   -483.4589 |  71.4957 | [  -623.8269,  -343.0909]
+weathersit [RainSnow]    |  -2098.6424 | 182.5543 | [ -2457.0523, -1740.2325]
+temp c                   |   6953.7261 | 533.0141 | [  5907.2562,  8000.1960]
+hum                      |  -1811.2357 | 262.3533 | [ -2326.3155, -1296.1559]
+windspeed                |  -3026.2475 | 375.9891 | [ -3764.4291, -2288.0658]
+season [Summer] × temp c |  -1722.8052 | 685.9602 | [ -3069.5551,  -376.0553]
+season [Fall] × temp c   | -11722.3499 | 925.4214 | [-13539.2354, -9905.4643]
+season [Winter] × temp c |    964.4159 | 731.7577 | [  -472.2484,  2401.0802]
+
+Parameter                |   t(711) |      p
+--------------------------------------------
+(Intercept)              |  18.8429 | < .001
+season [Summer]          |   6.0430 | < .001
+season [Fall]            |  12.5376 | < .001
+season [Winter]          |  10.4823 | < .001
+yr [2012]                |  36.9963 | < .001
+holiday [Yes]            |  -3.5927 | < .001
+weekday [Mon]            |   1.7157 | 0.087 
+weekday [Tue]            |   2.7166 | 0.007 
+weekday [Wed]            |   3.4618 | < .001
+weekday [Thu]            |   3.6702 | < .001
+weekday [Fri]            |   4.2030 | < .001
+weekday [Sat]            |   4.4719 | < .001
+weathersit [Mist]        |  -6.7621 | < .001
+weathersit [RainSnow]    | -11.4960 | < .001
+temp c                   |  13.0460 | < .001
+hum                      |  -6.9038 | < .001
+windspeed                |  -8.0488 | < .001
+season [Summer] × temp c |  -2.5115 | 0.012 
+season [Fall] × temp c   | -12.6670 | < .001
+season [Winter] × temp c |   1.3179 | 0.188 
+
+Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+  using a Wald t-distribution approximation.
+
+---- 7.2 Regression prediction for 2 Jan 2013 (T10) ----
+                         model
+1  M8 final (with season:temp)
+2  M8 final (with season:temp)
+3  M8 final (with season:temp)
+4 M2 additive (no interaction)
+5 M2 additive (no interaction)
+6 M2 additive (no interaction)
+                                                   scenario temp_C hum_pct
+1           primary: weathersit = Clear, daily mean weather    2.0    47.9
+2                 sensitivity A: weathersit = Mist (cloudy)    2.0    47.9
+3 sensitivity B: 17:00 weather snapshot, weathersit = Clear    1.7    41.5
+4           primary: weathersit = Clear, daily mean weather    2.0    47.9
+5                 sensitivity A: weathersit = Mist (cloudy)    2.0    47.9
+6 sensitivity B: 17:00 weather snapshot, weathersit = Clear    1.7    41.5
+  wind_kmh weathersit  fit CI_low CI_high PI_low PI_high
+1     14.6      Clear 3354   2944    3764   1888    4820
+2     14.6       Mist 2871   2440    3301   1398    4343
+3     11.1      Clear 3554   3134    3975   2086    5024
+4     14.6      Clear 4302   3991    4613   2674    5930
+5     14.6       Mist 3851   3524    4178   2220    5482
+6     11.1      Clear 4478   4159    4796   2848    6107
+
+point forecast check (predict vs X %*% beta):
+       fit manual_check diff
+1 3354.014     3354.014    0
+
+---- reference: daily totals actually observed on comparable days ----
+      dteday weekday  workingday temp_C weathersit  cnt
+1 2011-01-02     Sun Non-working   14.9       Mist  801
+2 2012-01-02     Mon Non-working   11.2      Clear 1951
+3 2012-01-03     Tue     Working    6.1      Clear 2236
+4 2012-01-04     Wed     Working    4.4       Mist 2368
+5 2012-12-31     Mon     Working    8.8       Mist 2729
+
+January 2012: mean = 3121 | December 2012: mean = 3991 | whole-sample mean = 4504 
+early January business days in 2012 (the closest analogue of 2 Jan 2013):
+      dteday weekday holiday temp_C weathersit  cnt
+1 2012-01-02     Mon     Yes   11.2      Clear 1951
+2 2012-01-03     Tue      No    6.1      Clear 2236
+3 2012-01-04     Wed      No    4.4       Mist 2368
+4 2012-01-05     Thu      No   10.9      Clear 3272
+5 2012-01-06     Fri      No   13.7      Clear 4098
+6 2012-01-07     Sat      No   16.1      Clear 4521
+7 2012-01-08     Sun      No   13.8      Clear 3425
+8 2012-01-09     Mon      No    9.2       Mist 2376
+9 2012-01-10     Tue      No   12.7      Clear 3598
+
+==================== 02 REGRESSION COMPLETE =======================

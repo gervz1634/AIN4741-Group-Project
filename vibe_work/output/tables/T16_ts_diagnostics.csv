@@ -1,0 +1,10 @@
+diagnostic,value,p_value
+Ljung-Box Q(7),7.6431,0.1056
+Ljung-Box Q(14),11.8984,0.3713
+Ljung-Box Q(21),16.6164,0.5496
+Shapiro-Wilk W,0.911,
+Shapiro-Wilk p,0,
+Skewness of residuals,-1.3097,
+Kurtosis of residuals,8.1805,
+Residual standard deviation (bikes/day),917.795,
+Residual sd as % of mean daily total,20.3758,

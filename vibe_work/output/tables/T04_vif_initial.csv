@@ -1,0 +1,11 @@
+Term,VIF,VIF_CI_low,VIF_CI_high,Tolerance,verdict
+season,219.8,186.894,258.532,0.005,SEVERE (VIF >= 10)
+yr,1.545,1.399,1.744,0.647,acceptable (VIF < 5)
+mnth,736.744,626.255,866.758,0.001,SEVERE (VIF >= 10)
+holiday,1.172,1.091,1.325,0.853,acceptable (VIF < 5)
+weekday,1.206,1.118,1.36,0.829,acceptable (VIF < 5)
+weathersit,1.929,1.724,2.194,0.518,acceptable (VIF < 5)
+temp,222.944,189.566,262.231,0.004,SEVERE (VIF >= 10)
+atemp,203.304,172.873,239.123,0.005,SEVERE (VIF >= 10)
+hum,2.218,1.968,2.532,0.451,acceptable (VIF < 5)
+windspeed,1.415,1.29,1.594,0.707,acceptable (VIF < 5)

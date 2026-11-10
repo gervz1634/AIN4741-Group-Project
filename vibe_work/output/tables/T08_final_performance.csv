@@ -1,0 +1,2 @@
+AIC,AICc,BIC,R2,R2_adjusted,RMSE,Sigma,F_statistic,df_num,df_den,p_F,n
+8065.7609,8067.6466,8154.7657,0.8514,0.8457,612.0203,624.3358,148.4,19,492,0,512

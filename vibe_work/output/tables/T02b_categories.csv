@@ -1,0 +1,8 @@
+variable,n_levels,levels
+season,4,1-4
+mnth,12,1-12
+weekday,7,0-6
+weathersit,4,1-4
+yr,2,0/1
+holiday,2,0/1
+workingday,2,0/1

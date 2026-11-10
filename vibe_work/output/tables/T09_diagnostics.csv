@@ -1,0 +1,9 @@
+check,statistic,p_value
+Shapiro-Wilk normality of residuals (W),0.9704,1.188e-8
+Breusch-Pagan test for heteroscedasticity,59.025,5.514e-6
+Ljung-Box Q(14) on residuals,130.3624,0
+Durbin-Watson statistic,1.3795,
+Residual outliers with |z| > 3,8,
+Largest Cook's distance,0.0737,
+Maximum VIF of the additive core (M2),4.021,
+Maximum VIF of the final model,41.446,

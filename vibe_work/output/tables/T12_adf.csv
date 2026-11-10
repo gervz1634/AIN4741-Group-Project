@@ -1,0 +1,5 @@
+series,type,lags,statistic,crit_1pct,crit_5pct,crit_10pct,reject_5pct
+level (cnt),drift,7,-2.4272,-3.43,-2.86,-2.57,FALSE
+"first difference, d = 1",drift,7,-14.4395,-3.43,-2.86,-2.57,TRUE
+"seasonal difference, D = 1 (lag 7)",drift,7,-11.653,-3.43,-2.86,-2.57,TRUE
+d = 1 and D = 1 (lag 7),drift,7,-16.7616,-3.43,-2.86,-2.57,TRUE
