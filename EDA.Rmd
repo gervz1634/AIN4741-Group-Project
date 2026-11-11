@@ -48,7 +48,7 @@ Training %>%
 ```
 
 ```{r}
-cat_col[!cat_col %in% c("yr", "mnth", "weekday")] %>%
+cat_col[!cat_col %in% c("yr", "mnth", "weekday", "workingday")] %>%
   map(~ ggplot(Training, aes(x = .data[[.x]], y = cnt)) +
     geom_boxplot() +
     labs(x = .x)) %>%
@@ -56,7 +56,7 @@ cat_col[!cat_col %in% c("yr", "mnth", "weekday")] %>%
 ```
 
 ```{r}
-num_col %>%
+num_col[!num_col %in% c("atemp")] %>%
   map(~ ggplot(Training, aes(y = .data[[.x]], x = cnt)) +
     geom_point() +
     geom_smooth(method = "lm", color = "red") +

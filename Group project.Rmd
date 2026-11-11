@@ -85,21 +85,22 @@ correlation(Training, select = c("temp", "atemp"))
 # Outcome
 Training <- Training %>%
   mutate(
-    heat = ifelse(atemp * 50 > 27 & hum * 100 > 60, 1, 0) # It will contain a high correlation if use interaction
+    heat = ifelse(atemp * 50 > 27 & hum * 100 > 60, 1, 0), # It will contain a high correlation if use interaction
+    heat_inte = atemp * hum
   ) %>%
   select(-c(atemp)) %>%
   mutate(heat = as.factor(heat))
 
 
 # Training <- Training %>%
-#   select(-c(mnth, atemp))
+#   select(-c(atemp))
 ```
 
 
 
 ## Multicollinearity
 Observation:
- - *season* and *mnth* show strong VIF (>10), but *mnth* has a stronger VIF
+ - *season* and *mnth* show strong VIF (>10)
  
 Insight:
  - deleted the *mnth* to reduced multicollinearity and keep *season* since it contain information relating to the *temp*
@@ -154,6 +155,24 @@ correlation(Training) %>%
   summary() %>%
   plot() +
   theme_ev()
+```
+
+
+## *dteday* and *cnt*
+Observation:
+ - Significant different between these two years
+ 
+Insight:
+ - 
+ 
+```{r}
+df_day %>% 
+  ggplot(aes(y = cnt, x = dteday)) + 
+  geom_line()
+
+Training %>% 
+  ggplot(aes(y = temp, x = season)) +
+  geom_point()
 ```
 
 
@@ -233,7 +252,16 @@ Insight:
  - 
 
 ```{r}
+compare_performance(
+  lm_baseline_model, lm_stepwise_model
+)
 
+
+compare_performance(
+  lm_baseline_model, lm_stepwise_model
+) %>%
+  plot() +
+  theme_ev()
 ```
 
 
