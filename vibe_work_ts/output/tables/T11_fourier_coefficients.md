@@ -1,0 +1,12 @@
+**Table T11 - The eight annual Fourier coefficients (period 8,766 h = 365.25 days; K = 4) of the final model, on the log scale**
+
+| term | estimate | std.error | statistic | p.value |
+| --- | --- | --- | --- | --- |
+| fourier(period = 8766, K = 4)C1_8766 | -0.4522 | 0.0051 | -87.9209 | 0.0000 |
+| fourier(period = 8766, K = 4)S1_8766 | -0.0688 | 0.0056 | -12.2505 | 0.0000 |
+| fourier(period = 8766, K = 4)C2_8766 | -0.0971 | 0.0051 | -18.9034 | 0.0000 |
+| fourier(period = 8766, K = 4)S2_8766 | -0.0731 | 0.0053 | -13.8817 | 0.0000 |
+| fourier(period = 8766, K = 4)C3_8766 | -0.0514 | 0.0051 | -10.0042 | 0.0000 |
+| fourier(period = 8766, K = 4)S3_8766 | 0.0220 | 0.0052 | 4.2345 | 0.0000 |
+| fourier(period = 8766, K = 4)C4_8766 | -0.0212 | 0.0051 | -4.1184 | 0.0000 |
+| fourier(period = 8766, K = 4)S4_8766 | 0.0018 | 0.0052 | 0.3505 | 0.7260 |

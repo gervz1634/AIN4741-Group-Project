@@ -1,0 +1,194 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+library(tidyverse)
+library(easystats)
+library(patchwork)
+
+library(tsibble)  
+library(fable)   
+library(feasts)
+
+library(ggfortify)
+
+source("utils_for_group_project.R")
+```
+
+```{r data}
+df_time <- read_csv("bike+sharing+dataset/hour.csv")[, -1]  %>%
+  mutate(
+    datetime = ymd_h(paste(dteday, hr))
+  )
+
+
+Training_time <- df_time %>%
+  filter(
+    datetime >= ymd_h("2011-01-01 00"),
+    datetime <= ymd_h("2012-6-30 23")
+  )
+Testing_time <- df_time %>% 
+    filter(
+    datetime >= ymd_h("2012-7-01 00")
+  )
+
+
+train_ts <- Training_time %>%
+  as_tsibble(index = datetime)%>%
+  fill_gaps(cnt = 0)
+```
+
+# EDA
+Observation:
+ - 
+ 
+Insight:
+ - 
+
+```{r y}
+Training_time %>% 
+  ggplot(aes(x = datetime, y = cnt)) +
+  geom_line(color = "steelblue", alpha = 0.6) +
+  labs(title = "2011年共享单车每小时租借量趋势", x = "时间", y = "租借量 (cnt)") +
+  theme_minimal()
+```
+
+Observation:
+ - 
+ 
+Insight:
+ - 
+
+```{r}
+time_slot <- c("season", "yr", "mnth", "hr")
+
+
+time_slot %>%
+  map(~
+    ggplot(Training_time, aes(x = factor(.data[[.x]]), y = cnt)) +
+      geom_boxplot(fill = "lightblue", outlier.alpha = 0.3) +
+      labs(
+        title = paste0("一天中按 ", .x, " 的租借量分布"),
+        x = .x,
+        y = "租借量 (cnt)"
+      ) +
+      theme_minimal()) %>%
+  wrap_plots()
+
+
+Training_time %>%
+  ggplot(aes(x = hr, y = cnt, color = factor(workingday))) +
+  # 用 stat_summary 自动计算每个小时的平均值画折线
+  stat_summary(fun = mean, geom = "line", size = 1.2) +
+  scale_color_manual(
+    values = c("0" = "coral", "1" = "steelblue"),
+    labels = c("非工作日", "工作日"),
+    name = "类型"
+  ) +
+  labs(title = "workingday vs not workingday 的每小时平均租借量", x = "小时", y = "平均租借量") +
+  theme_minimal()
+
+
+
+```
+
+
+```{r}
+# 预定义顺序
+mnth_order <- c("January","February","March","April","May","June","July","August","September","October","November","December")
+weekday_order <- c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
+
+# 图1：月份 (柱状图)
+plot1 <- Training_time %>% 
+  group_by(mnth) %>% 
+  summarise(avg = mean(count, na.rm = TRUE)) %>%
+  mutate(mnth = factor(mnth, levels = mnth_order)) %>%
+  ggplot(aes(x = mnth, y = avg)) +
+  geom_col(fill = "steelblue") +
+  labs(title = "Average Count By mnth", x = "mnth", y = "Average Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# 图2：季节 x 小时 (点线图)
+plot2 <- Training_time %>% 
+  group_by(hr, season) %>% 
+  summarise(avg = mean(count, na.rm = TRUE), .groups = "drop") %>%
+  ggplot(aes(x = hr, y = avg, color = season)) +
+  geom_point() + geom_line() +
+  labs(title = "Average Users Count By hr Of The Day Across Season", 
+       x = "hr Of The Day", y = "Users Count") +
+  theme_minimal()
+
+# 图3：星期 x 小时 (点线图)
+plot3 <- Training_time %>% 
+  group_by(hr, weekday) %>% 
+  summarise(avg = mean(count, na.rm = TRUE), .groups = "drop") %>%
+  mutate(weekday = factor(weekday, levels = weekday_order)) %>%
+  ggplot(aes(x = hr, y = avg, color = weekday)) +
+  geom_point() + geom_line() +
+  labs(title = "Average Users Count By hr Of The Day Across Weekdays", 
+       x = "hr Of The Day", y = "Users Count") +
+  theme_minimal()
+
+# 图4：用户类型 x 小时 (点线图)
+plot4 <- Training_time %>% 
+  select(hr, casual, registered) %>%
+  pivot_longer(cols = c(casual, registered), names_to = "type", values_to = "value") %>%
+  group_by(hr, type) %>% 
+  summarise(avg = mean(value, na.rm = TRUE), .groups = "drop") %>%
+  ggplot(aes(x = hr, y = avg, color = type)) +
+  geom_point() + geom_line() +
+  labs(title = "Average Users Count By hr Of The Day Across User Type", 
+       x = "hr Of The Day", y = "Users Count") +
+  theme_minimal()
+
+plot1 
+plot2 
+plot3 
+plot4
+# 拼图
+# (plot1 / plot2 / plot3 / plot4) + 
+#   plot_layout(guides = "collect") # 如果想让图例合并（可选）
+```
+
+
+```{r}
+# 1. 查看自相关性 (ACF) - 检查日周期和周周期
+train_ts %>%
+  ACF(cnt, lag_max = 168) %>% # 看过去一周 (24*7)
+  autoplot() +
+  labs(title = "Autocorrelation of Hourly Bike Rentals")
+
+# 2. STL 分解 (趋势 + 季节性 + 残差)
+train_ts %>%
+  model(STL(cnt ~ season(window = "periodic") + trend(window = 24*7))) %>%
+  components() %>%
+  autoplot() +
+  labs(title = "STL Decomposition")
+```
+
+
+```{r}
+# 拟合模型
+fit <- train_ts %>%
+  model(
+    # 1. 自动 ARIMA（等价于 auto.arima）
+    ARIMA = ARIMA(cnt),
+    
+    # 2. 指数平滑 (ETS)
+    ETS = ETS(cnt)
+  )
+
+# 查看模型结果报告
+report(fit)
+```
+

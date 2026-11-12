@@ -1,0 +1,5 @@
+test,statistic,p_value,conclusion
+KPSS on the level of cnt,33.4211,0.01,unit root / trend present: difference it
+KPSS on the log of cnt,20.919,0.01,unit root / trend present: difference it
+number of first differences suggested (KPSS),,,d = 1
+number of seasonal differences suggested (period 24),,,D = 0

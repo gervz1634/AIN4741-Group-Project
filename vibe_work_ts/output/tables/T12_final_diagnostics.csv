@@ -1,0 +1,10 @@
+diagnostic,value,p_value,df
+"Ljung-Box Q(240), df = 240 - k",59749,0,62
+"Shapiro-Wilk W (subsample of 4,999)",0.88037,,
+Shapiro-Wilk p,2.8634999999999997e-52,,
+residual ACF at lag 1,0.7198,,
+residual ACF at lag 24,0.24586,,
+residual ACF at lag 48,0.13637,,
+residual ACF at lag 168,0.065975,,
+residual sd (log scale),0.47885,,
+residual sd (bikes/hour),72.209,,

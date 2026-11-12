@@ -1,0 +1,158 @@
+## 00_setup.R loaded
+   R          : R version 4.6.1 (2026-06-24 ucrt) 
+   tidyverse  : 2.0.0 
+   easystats  : 0.7.6 
+   patchwork  : 1.3.2 
+   tsibble    : 1.2.0 
+   fable      : 0.5.0 
+   feasts     : 0.5.0 
+   ggfortify  : 0.4.24 
+
+=================== 03 MODEL SEARCH & SELECTION ===================
+
+observations: 17544 | from 2011-01-01 to 2012-12-31 23:00:00 
+
+---- 1.1 Guerrero / Box-Cox lambda for period 24 ----
+lambda = 0.0568 (0 = log, 1 = no transformation)
+
+---- 1.2 Table T07: sd grows with the level ----
+   bin mean_cnt sd_cnt    cv
+1    1      4.4    2.1 0.473
+2    2     15.9    5.1 0.322
+3    3     39.1    8.8 0.226
+4    4     75.5   11.7 0.154
+5    5    117.6   12.6 0.107
+6    6    163.4   13.6 0.083
+7    7    214.1   15.8 0.074
+8    8    279.6   21.8 0.078
+9    9    377.1   36.6 0.097
+10  10    592.4  117.9 0.199
+
+coefficient of variation: smallest decile 0.47 -> largest decile 0.2 
+sd of log(cnt) = 1.5012 
+
+---- 2.1 Table T08: stationarity ----
+                                                  test statistic p_value
+1                             KPSS on the level of cnt     33.42    0.01
+2                               KPSS on the log of cnt     20.92    0.01
+3         number of first differences suggested (KPSS)        NA      NA
+4 number of seasonal differences suggested (period 24)        NA      NA
+                                conclusion
+1 unit root / trend present: difference it
+2 unit root / trend present: difference it
+3                                    d = 1
+4                                    D = 0
+
+KPSS rejects constancy of the mean in the level series (the annual cycle
+ and the growth of the system); the daily seasonal pattern is treated as
+ deterministic, which is why the models below use seasonal harmonics /
+ dummies rather than a seasonal difference.
+
+---- 4.1 split ----
+training: 17208 hours ( 2011-01-01 to 2012-12-17 23:00:00 )
+hold-out: 336 hours ( 2012-12-18 to 2012-12-31 23:00:00 ) = 14 days
+
+---- 4.2 fitting 8 candidate models (this takes a couple of minutes) ----
+fitted in 2.17 min
+
+---- 5.1 glance() of all candidates (AICc is on the scale of the response) ----
+                .model scale     sigma2 r_squared    AIC   AICc    BIC
+1           SNAIVE_day level 1.1990e+04        NA     NA     NA     NA
+2          SNAIVE_week level 8.1895e+03        NA     NA     NA     NA
+3            TSLM_harm level 1.1753e+04   0.64541 161302 161302 161543
+4        ARIMA_fourier level 6.5465e+03        NA 200043 200043 200159
+5           ARIMA_auto level 4.1912e+03        NA 192107 192107 192161
+6        TSLM_log_harm   log 4.4135e-01   0.80406 -14043 -14042 -13802
+7         TSLM_log_how   log 4.3676e-01   0.98098 -14085 -14082 -12775
+8      TSLM_log_how_K3   log 2.9318e-01   0.98724 -20938 -20935 -19582
+9      TSLM_log_how_K4   log 2.9232e-01   0.98728 -20987 -20983 -19615
+10    TSLM_log_how_hol   log 2.9217e-01   0.98728 -20995 -20991 -19615
+11 TSLM_log_how_hol_tr   log 2.1611e-01   0.99059 -26183 -26179 -24795
+           CV
+1          NA
+2          NA
+3  1.1773e+04
+4          NA
+5          NA
+6  4.4212e-01
+7  4.4106e-01
+8  2.9618e-01
+9  2.9535e-01
+10 2.9526e-01
+11 2.1842e-01
+
+---- 5.2 Table T09: model comparison ----
+                .model scale   k R2_in RMSE_in RMSE_oos MAE_oos   ME_oos R2_oos
+1     TSLM_log_how_hol   log 177 0.737   93.20    87.81   55.95    8.241  0.464
+2      TSLM_log_how_K4   log 176 0.736   93.41    88.48   56.24    8.063  0.456
+3      TSLM_log_how_K3   log 174 0.735   93.57    89.30   56.62    8.476  0.446
+4         TSLM_log_how   log 168 0.605  114.28   119.72   82.98  -56.913  0.004
+5        TSLM_log_harm   log  30 0.663  105.66   122.50   85.17  -58.618 -0.043
+6  TSLM_log_how_hol_tr   log 178 0.845   71.58   123.15   84.76  -63.430 -0.054
+7           ARIMA_auto level   6 0.874   64.68   139.32   99.44  -82.256 -0.349
+8        ARIMA_fourier level  14 0.802   80.88   144.12  108.78  -88.085 -0.444
+9            TSLM_harm level  30 0.645  108.31   156.31  119.17 -106.661 -0.698
+10          SNAIVE_day level  NA    NA      NA   164.45  100.59  -85.179 -0.880
+11         SNAIVE_week level  NA    NA      NA   165.92  109.46 -104.738 -0.913
+   cover95_oos  acf24 acf168
+1        0.851  0.415  0.295
+2        0.851  0.417  0.296
+3        0.851  0.418  0.298
+4        0.839  0.608  0.518
+5        0.765  0.319  0.538
+6        0.696  0.211  0.064
+7        0.985 -0.055  0.428
+8        0.866  0.529  0.681
+9        0.807  0.494  0.648
+10       0.994 -0.132  0.447
+11       0.833  0.190 -0.498
+
+---- 6.1 rolling-origin evaluation: 57 origins x 24 hours ahead ----
+rolling loop took 1.36 min
+
+---- 6.2 Table T09b: rolling-origin accuracy ----
+               .model n_forecasts RMSE_roll MAE_roll ME_roll
+1 TSLM_log_how_hol_tr        1368     89.94    56.92   -5.49
+2    TSLM_log_how_hol        1368    115.66    79.11   59.19
+3     TSLM_log_how_K4        1368    115.99    79.31   59.22
+4    TSLM_log_harm_tr        1368    117.28    76.51    2.13
+
+---- 7.1 ranking ----
+                .model scale   k R2_in RMSE_oos MAE_oos   ME_oos
+1     TSLM_log_how_hol   log 177 0.737    87.81   55.95    8.241
+2      TSLM_log_how_K4   log 176 0.736    88.48   56.24    8.063
+3      TSLM_log_how_K3   log 174 0.735    89.30   56.62    8.476
+4         TSLM_log_how   log 168 0.605   119.72   82.98  -56.913
+5        TSLM_log_harm   log  30 0.663   122.50   85.17  -58.618
+6  TSLM_log_how_hol_tr   log 178 0.845   123.15   84.76  -63.430
+7           ARIMA_auto level   6 0.874   139.32   99.44  -82.256
+8        ARIMA_fourier level  14 0.802   144.12  108.78  -88.085
+9            TSLM_harm level  30 0.645   156.31  119.17 -106.661
+10          SNAIVE_day level  NA    NA   164.45  100.59  -85.179
+11         SNAIVE_week level  NA    NA   165.92  109.46 -104.738
+   rank_single_window
+1                   1
+2                   2
+3                   3
+4                   4
+5                   5
+6                   6
+7                   7
+8                   8
+9                   9
+10                 10
+11                 11
+
+Single hold-out window: TSLM_log_how_hol (RMSE 87.8 )
+Rolling origins       : TSLM_log_how_hol_tr (RMSE 89.94 , bias -5.49 )
+
+The two protocols disagree, and the reason is visible in Figure F12: the
+single window (18-31 December 2012) contains the Christmas collapse, when
+demand fell to 441-1,000 rentals per day, i.e. far below any smooth annual
+cycle. A model WITHOUT a trend has a lower level and is therefore rewarded
+by that particular fortnight, even though the level of the series has risen
+by about 42% between 2011 and 2012. Across 57 origins the version WITH a
+linear trend is clearly better (RMSE89.94against115.7) and almost unbiased.
+We therefore adoptTSLM_log_how_hol_tras the final model.
+
+===================== 03 MODELS COMPLETE ========================
