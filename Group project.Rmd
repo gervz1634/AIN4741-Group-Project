@@ -236,3 +236,38 @@ Insight:
 
 ```
 
+
+# Time series
+
+```{r}
+library(tsibble)  
+library(fable)   
+library(feasts)
+library(ggfortify)
+```
+
+
+```{r}
+Training %>%
+  as_tsibble(index = dteday) %>%
+  # fill_gaps(cnt = 0) %>%
+  model(classical_decomposition(cnt)) %>%
+  components() %>%
+  autoplot()
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  ACF(cnt) %>%
+  autoplot()
+```
+
+```{r}
+Training %>%
+  as_tsibble(index = dteday) %>%
+  autoplot(difference(cnt))
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  model(ARIMA(cnt))
+```
+
