@@ -243,9 +243,103 @@ Insight:
 library(tsibble)  
 library(fable)   
 library(feasts)
+library(tseries)
 library(ggfortify)
 ```
+```{r}
+Training %>%
+  as_tsibble(index = dteday) %>%
+  autoplot(cnt) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  labs(
+    title = "The original Y",
+    subtitle = "Not stationarity",
+  ) +
+  theme_ev()
 
+Training %>%
+  as_tsibble(index = dteday) %>%
+  ACF(cnt) %>%
+  autoplot() +
+  labs(
+    title = "The ACF of original Y"
+  ) +
+  theme_ev()
+
+Training$cnt %>% adf.test()
+```
+
+```{r}
+Training %>%
+  as_tsibble(index = dteday) %>%
+  mutate(
+    cnt_diff = difference(cnt)
+  ) %>%
+  autoplot(cnt_diff) +
+  labs(title = "1 lag Differencing") + # To remove the seasonality
+  theme_ev()
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  mutate(
+    cnt_diff = difference(cnt)
+  ) %>%
+  .$cnt_diff %>%
+  na.omit() %>%
+  adf.test()
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  mutate(
+    cnt_diff = difference(cnt)
+  ) %>%
+  ACF(cnt_diff) %>%
+  autoplot() +
+  labs(
+    title = "The ACF of 1 lag Y"
+  ) +
+  theme_ev()
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  ACF(cnt, type = "partial") %>%
+  autoplot() +
+  labs(
+    title = "The PACF of 1 lag Y"
+  ) +
+  theme_ev()
+```
+
+
+```{r}
+Training %>%
+  as_tsibble(index = dteday) %>%
+  gg_season(cnt, period = "year") +
+  labs(title = "每year季节性折线图", y = "使用量")
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  gg_season(cnt, period = "month") +
+  labs(title = "每月季节性折线图", y = "使用量")
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  gg_season(cnt, period = "week") +
+  labs(title = "每周季节性折线图", y = "使用量")
+    
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  index_by(week = ~ yearweek(.)) %>% # 按周聚合
+  summarise(avg_cnt = mean(cnt)) %>%
+  autoplot(avg_cnt) +
+  labs(title = "每周平均使用量趋势", y = "平均使用量")
+```
 
 ```{r}
 Training %>%
@@ -253,11 +347,20 @@ Training %>%
   # fill_gaps(cnt = 0) %>%
   model(classical_decomposition(cnt)) %>%
   components() %>%
-  autoplot()
+  autoplot() +
+  labs(
+    title = "Decoposition"
+  )
 
 Training %>%
   as_tsibble(index = dteday) %>%
   ACF(cnt) %>%
+  autoplot()
+
+
+Training %>%
+  as_tsibble(index = dteday) %>%
+  ACF(cnt, type = "partial") %>%
   autoplot()
 ```
 
