@@ -14,6 +14,12 @@ Calendar days expected: 731 | observed: 731 | gaps: 0
 
 max |cnt - (casual + registered)| = 0 
 
+mean temperature and mean demand by season level:
+  season mean_temp_C mean_cnt
+1 Winter        12.2     2604
+2 Spring        22.3     4992
+3 Summer        29.0     5644
+4 Autumn        17.3     4728
 occurrence of each categorical level:
    season : 1 181 2 184 3 188 4 178  | 
    yr : 0 365 1 366  | 

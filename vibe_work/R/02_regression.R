@@ -188,9 +188,9 @@ cat("\nthe temperature slope implied by the interaction model, per season\n")
 b_int <- coef(M_int1)
 int_names <- grep(":temp$", names(b_int), value = TRUE)
 slopes <- c(b_int[["temp"]], b_int[["temp"]] + b_int[int_names])
-names(slopes) <- c("Spring", sub("^season(.*):temp$", "\\1", int_names))
-cat("per unit of normalised temp (41 deg C):\n"); print(round(slopes, 1))
-cat("per degree Celsius:\n"); print(round(slopes / 41, 1))
+names(slopes) <- c(levels(train$season)[1], sub("^season(.*):temp$", "\\1", int_names))
+cat("slope of temp (bikes per degree C), by season:\n")
+print(round(slopes / 41, 1))
 
 ## ---------------------------------------------------------------------------
 ## 5. Comparison of the candidate models (T06)

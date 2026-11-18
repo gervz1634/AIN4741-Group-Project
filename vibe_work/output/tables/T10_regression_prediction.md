@@ -2,9 +2,9 @@
 
 | model | scenario | temp_C | hum_pct | wind_kmh | weathersit | fit | CI_low | CI_high | PI_low | PI_high |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M8 final (with season:temp) | primary: weathersit = Clear, daily mean weather | 2.0 | 47.9 | 14.6 | Clear | 3354.0 | 2943.8 | 3764.2 | 1887.8 | 4820.2 |
-| M8 final (with season:temp) | sensitivity A: weathersit = Mist (cloudy) | 2.0 | 47.9 | 14.6 | Mist | 2870.6 | 2440.0 | 3301.1 | 1398.5 | 4342.6 |
-| M8 final (with season:temp) | sensitivity B: 17:00 weather snapshot, weathersit = Clear | 1.7 | 41.5 | 11.1 | Clear | 3554.5 | 3134.5 | 3974.6 | 2085.5 | 5023.5 |
-| M2 additive (no interaction) | primary: weathersit = Clear, daily mean weather | 2.0 | 47.9 | 14.6 | Clear | 4302.0 | 3991.2 | 4612.7 | 2674.2 | 5929.7 |
-| M2 additive (no interaction) | sensitivity A: weathersit = Mist (cloudy) | 2.0 | 47.9 | 14.6 | Mist | 3851.1 | 3523.8 | 4178.3 | 2220.1 | 5482.1 |
-| M2 additive (no interaction) | sensitivity B: 17:00 weather snapshot, weathersit = Clear | 1.7 | 41.5 | 11.1 | Clear | 4477.7 | 4159.3 | 4796.1 | 2848.5 | 6106.9 |
+| M8 final (with season:temp) | primary: weathersit = Clear, daily mean weather | 2.0 | 47.9 | 14.6 | Clear | 2358.2 | 2036.7 | 2679.7 | 914.3 | 3802.1 |
+| M8 final (with season:temp) | sensitivity A: weathersit = Mist (cloudy) | 2.0 | 47.9 | 14.6 | Mist | 1874.8 | 1545.7 | 2203.8 | 429.1 | 3320.4 |
+| M8 final (with season:temp) | sensitivity B: 17:00 weather snapshot, weathersit = Clear | 1.7 | 41.5 | 11.1 | Clear | 2567.5 | 2238.7 | 2896.2 | 1121.9 | 4013.0 |
+| M2 additive (no interaction) | primary: weathersit = Clear, daily mean weather | 2.0 | 47.9 | 14.6 | Clear | 2758.1 | 2500.3 | 3015.9 | 1139.6 | 4376.6 |
+| M2 additive (no interaction) | sensitivity A: weathersit = Mist (cloudy) | 2.0 | 47.9 | 14.6 | Mist | 2307.2 | 2033.7 | 2580.7 | 686.1 | 3928.3 |
+| M2 additive (no interaction) | sensitivity B: 17:00 weather snapshot, weathersit = Clear | 1.7 | 41.5 | 11.1 | Clear | 2933.8 | 2666.9 | 3200.8 | 1313.9 | 4553.8 |

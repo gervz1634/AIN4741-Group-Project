@@ -45,11 +45,20 @@ df <- df_raw %>%
 
 ## Give every categorical variable self-explanatory factor labels.  They are
 ## written back into the canonical columns so that every model output, table
-## and figure of the report is directly readable (e.g. "season [Winter]").
+## and figure of the report is directly readable (e.g. "season [Summer]").
+##
+## NOTE ON `season`.  The dataset page describes the four levels as
+## "1 spring, 2 summer, 3 fall, 4 winter", but the file does not follow that
+## description: cross-tabulating month against season shows that level 1 covers
+## 21 Dec - 20 Mar and level 3 covers 21 Jun - 20 Sep, i.e. the levels are the
+## ASTRONOMICAL quarters, and the mean temperature inside them (12.2, 22.3, 29.0
+## and 17.3 degC) identifies level 1 as winter and level 3 as summer.  The
+## labels below therefore use the season that the data actually show; the
+## discrepancy with the description is discussed in Section 1.2 of the report.
 df <- df %>%
   mutate(
     season     = factor(season, levels = 1:4,
-                        labels = c("Spring", "Summer", "Fall", "Winter")),
+                        labels = c("Winter", "Spring", "Summer", "Autumn")),
     yr         = factor(yr, levels = 0:1, labels = c("2011", "2012")),
     mnth       = factor(mnth, levels = 1:12, labels = month.abb),
     holiday    = factor(holiday, levels = 0:1, labels = c("No", "Yes")),
@@ -60,6 +69,14 @@ df <- df %>%
     weathersit = factor(weathersit, levels = 1:4,
                         labels = c("Clear", "Mist", "RainSnow", "Heavy"))
   )
+
+## Evidence for the note above: the temperature of each season level
+cat("mean temperature and mean demand by season level:\n")
+print(as.data.frame(
+  df %>% group_by(season) %>%
+    summarise(mean_temp_C = round(mean(temp) * 41, 1), mean_cnt = round(mean(cnt)),
+              .groups = "drop")
+))
 
 ## Which categories actually occur?  weathersit = 4 (heavy rain / snow / fog)
 ## never occurs in the 731 days, so the empty level is dropped (otherwise lm()
