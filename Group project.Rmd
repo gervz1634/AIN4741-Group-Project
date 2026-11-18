@@ -267,7 +267,7 @@ compare_performance(
 
 # Time series
 
-```{r}
+```{r include=FALSE}
 library(tsibble)  
 library(fable)   
 library(feasts)
@@ -282,8 +282,7 @@ Training %>%
   labs(
     title = "The original Y",
     subtitle = "Not stationarity",
-  ) +
-  theme_ev()
+  ) 
 
 Training %>%
   as_tsibble(index = dteday) %>%
@@ -291,8 +290,7 @@ Training %>%
   autoplot() +
   labs(
     title = "The ACF of original Y"
-  ) +
-  theme_ev()
+  ) 
 
 Training$cnt %>% adf.test()
 ```
@@ -346,27 +344,27 @@ Training %>%
 Training %>%
   as_tsibble(index = dteday) %>%
   gg_season(cnt, period = "year") +
-  labs(title = "每year季节性折线图", y = "使用量")
+  labs(title = "Yearly", y = "cnt")
 
 
 Training %>%
   as_tsibble(index = dteday) %>%
   gg_season(cnt, period = "month") +
-  labs(title = "每月季节性折线图", y = "使用量")
+  labs(title = "Month", y = "cnt")
 
 
 Training %>%
   as_tsibble(index = dteday) %>%
   gg_season(cnt, period = "week") +
-  labs(title = "每周季节性折线图", y = "使用量")
+  labs(title = "Week", y = "cnt")
     
 
 Training %>%
   as_tsibble(index = dteday) %>%
-  index_by(week = ~ yearweek(.)) %>% # 按周聚合
+  index_by(week = ~ yearweek(.)) %>% #
   summarise(avg_cnt = mean(cnt)) %>%
   autoplot(avg_cnt) +
-  labs(title = "每周平均使用量趋势", y = "平均使用量")
+  labs(title = "Weekly average", y = "average cnt")
 ```
 
 ```{r}
