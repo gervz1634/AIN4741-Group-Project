@@ -3,10 +3,7 @@ library(forecast)
 library(tidyverse)
 library(patchwork)
 
-
 df_time <- read_csv("bike+sharing+dataset/day.csv")[, -1]
-df_time$dteday <- df_time %>% ymd(dteday)
-
 
 savePNG <- function(name, graph) {
   ggsave(
@@ -20,57 +17,67 @@ savePNG <- function(name, graph) {
 # Original ----------------------------------------------------------------
 
 y_weekly <- ts(df_time$cnt, frequency = 7, start = c(1, 1))
-y_weekly %>%
-  autoplot(linewidth = 0.7) +
-  labs(title = "The original Y", y = "cnt")
+p1 <- y_weekly %>%
+  autoplot() +
+  labs(title = "Original Time Series of Daily Bike Rental Count", y = "cnt")
 y_weekly %>%
   decompose() %>%
   autoplot(linewidth = 1) +
-  labs(title = "Decomposition")
+  labs(title = "Decomposition of Original Series")
 # ggseasonplot(y_weekly, year.labels = FALSE) +
 #   labs(title = "Seasonal Plot of Y", x = "Day of Week")
-ggAcf(y_weekly) + labs(title = "ACF of Y") +
-  ggPacf(y_weekly) + labs(title = "PACF of Y")
+p2 <- ggAcf(y_weekly) +
+  labs(title = "ACF Plot of Original Series")
+p3 <- ggPacf(y_weekly) +
+  labs(title = "PACF Plot of Original Series")
+p1 / (p2 | p3)
 adf.test(y_weekly)
 
 
+# 1st-order ordinary differencing
 y_weekly.diff1 <- diff(y_weekly)
-y_weekly.diff1 %>%
-  autoplot(linewidth = 0.7) +
-  labs(title = "1 lag Differencing", y = "cnt")
+p1 <- y_weekly.diff1 %>%
+  autoplot() +
+  labs(title = "1st-order Ordinary Differencing", y = "cnt")
 y_weekly.diff1 %>%
   decompose() %>%
   autoplot(linewidth = 1) +
-  labs(title = "Decomposition")
+  labs(title = "Decomposition after 1st-order Differencing")
 # ggseasonplot(y_weekly, year.labels = FALSE) +
 #   labs(title = "Seasonal Plot of Y", x = "Day of Week")
-ggAcf(y_weekly.diff1) + labs(title = "ACF of 1 lag diff Y") +
-  ggPacf(y_weekly.diff1) + labs(title = "PACF of 1 lag diff Y")
-# Since the ACF has cut-off in lag 1 and have significant correlation at the seasonal lags 7
-# PACF has a
+p2 <- ggAcf(y_weekly.diff1) +
+  labs(title = "ACF Plot after 1st-order Differencing")
+p3 <- ggPacf(y_weekly.diff1) +
+
+  labs(title = "PACF Plot after 1st-order Differencing")
+# ACF cuts off at lag 1, while significant autocorrelation still remains at seasonal lag 7,
+# indicating weekly seasonal pattern has not been removed yet
+p1 / (p2 | p3)
 adf.test(y_weekly.diff1)
 
 
-
-# Modeling ----------------------------------------------------------------
-
-# Seasonal differencing
+# Seasonal differencing (lag = 7, weekly cycle)
 y_weekly.diff1.seasonal <- diff(y_weekly.diff1, lag = 7)
-y_weekly.diff1.seasonal %>%
-  autoplot(linewidth = 0.7) +
-  labs(title = "lag=1 and lag=7 Differencing", y = "cnt")
+p1 <- y_weekly.diff1.seasonal %>%
+  autoplot() +
+  labs(title = "1st-order Differencing and Seasonal Differencing (lag = 7)", y = "cnt")
 y_weekly.diff1.seasonal %>%
   decompose() %>%
   autoplot(linewidth = 1) +
-  labs(title = "Decomposition")
+  labs(title = "Decomposition after Ordinary + Seasonal Differencing")
 # ggseasonplot(y_weekly, year.labels = FALSE) +
 #   labs(title = "Seasonal Plot of Y", x = "Day of Week")
-ggAcf(y_weekly.diff1.seasonal) + labs(title = "ACF of lag=1 diff and lag = 7 diff Y") +
-  ggPacf(y_weekly.diff1.seasonal) + labs(title = "PACF of 1 lag diff Y")
-# Since the ACF has cut-off in lag 1 and have significant correlation at the seasonal lags 7
-# PACF has a
+p2 <- ggAcf(y_weekly.diff1.seasonal) +
+  labs(title = "ACF Plot after Ordinary and Seasonal Differencing")
+p3 <- ggPacf(y_weekly.diff1.seasonal) +
+  labs(title = "PACF Plot after Ordinary and Seasonal Differencing")
+# After combined differencing, check whether non-stationarity and weekly seasonality are eliminated;
+# use ACF/PACF to identify candidate SARIMA(p,d,q)(P,D,Q)7 orders
+p1 / (p2 | p3)
 adf.test(y_weekly.diff1.seasonal)
 
+
+# Modeling ----------------------------------------------------------------
 
 candidate_model <- expand.grid(
   p = 0:2,
@@ -88,7 +95,7 @@ ARIMA_model_weekly.list <- lapply(
   }
 )
 cat("Total", length(ARIMA_model_weekly.list), "models")
-sapply(ARIMA_model_weekly.list, AIC)
+# sapply(ARIMA_model_weekly.list, AIC)
 target_model <- sapply(ARIMA_model_weekly.list, AIC) %>%
   which.min() %>%
   ARIMA_model_weekly.list[[.]]
@@ -116,19 +123,23 @@ AIC(ARIMA_model_weekly.auto) > AIC(target_model)
 
 
 # quadratic term ------------------------------------------------------------------
-t <- 1:length(y_weekly)
-t_poly2 <- poly(t, degree = 2, raw = FALSE)
-xreg_quad <- as.matrix(t_poly2)
-colnames(xreg_quad) <- c("t1", "t2")
 
-ARIMA_model_weekly.quadra.auto <- auto.arima(
-  y_weekly,
-  ic = "aic",
-  xreg = xreg_quad
-)
+ts_rand_trend <- y_weekly - decompose(y_weekly)$seasonal
+t <- seq_len(length(ts_rand_trend))
+lmr <- lm(ts_rand_trend ~ t + I(t^2))
+ts_trend <- ts(predict.lm(lmr, newdata = list(t)), frequency = 7)
+ts_rand <- ts(ts_rand_trend - ts_trend)
+adf.test(ts_rand)
 
-summary(ARIMA_model_weekly.quadra.auto)
-checkresiduals(ARIMA_model_weekly.quadra.auto)
+
+ARIMA_model_weekly.quadra.auto <- auto.arima(ts_rand)
+ARIMA_model_weekly.quadra.auto %>% arimaorder()
+ARIMA_model_weekly.quadra.auto %>% summary()
+ARIMA_model_weekly.quadra.auto %>% autoplot()
+ARIMA_model_weekly.quadra.auto %>% checkresiduals()
+ARIMA_model_weekly.quadra.auto %>%
+  forecast() %>%
+  autoplot()
 
 
 # Model fitness -------------------------------------------------------------------
@@ -140,9 +151,9 @@ candidate_model <- list(
 lapply(
   candidate_model,
   function(mod) {
-    Box.test(mod$residuals, lag = 10, type = "Ljung-Box")
+    Box.test(mod$residuals, lag = 14, type = "Ljung-Box")
   }
-) # ???
+) #
 
 
 # Forecasting -------------------------------------------------------------
@@ -152,7 +163,10 @@ p1 <- autoplot(forecast(target_model, h = 10)) + ggtitle("Grid best SARIMA")
 # 模型2 ARIMA_model_weekly.auto
 p2 <- autoplot(forecast(ARIMA_model_weekly.auto, h = 10)) + ggtitle("Auto SARIMA")
 # 模型3 带二次项SARIMAX，一定要加 xreg = t_poly2_future
-p3 <- autoplot(forecast(ARIMA_model_weekly.quadra.auto, h = 10, xreg = t_poly2_future)) + ggtitle("Auto SARIMAX + quadratic trend")
+p3 <- autoplot(
+  forecast(ARIMA_model_weekly.quadra.auto, h = 10, xreg = t_poly2_future)
+) +
+  ggtitle("Auto SARIMAX + quadratic trend")
 
 # 用你已经加载的patchwork拼合三张图
 p1 + p2 + p3
