@@ -102,7 +102,7 @@ target_model <- sapply(ARIMA_model_weekly.list, AIC) %>%
 cat("The", sapply(ARIMA_model_weekly.list, AIC) %>% which.min(), "model has lowest AIC")
 target_model %>% arimaorder()
 target_model %>% summary()
-target_model %>% autoplot()
+target_model %>% autoplot() + labs(title = "ARIMA(1,1,1)(0,1,1)[7]")
 target_model %>% checkresiduals()
 target_model %>%
   forecast() %>%
@@ -112,7 +112,7 @@ target_model %>%
 ARIMA_model_weekly.auto <- auto.arima(y_weekly, ic = "aic") # The result of auto.arima() justify the choice of differencing
 ARIMA_model_weekly.auto %>% arimaorder()
 ARIMA_model_weekly.auto %>% summary()
-ARIMA_model_weekly.auto %>% autoplot()
+ARIMA_model_weekly.auto %>% autoplot() + labs(title = "ARIMA(1,1,1)(1,0,2)[7]")
 ARIMA_model_weekly.auto %>% checkresiduals()
 ARIMA_model_weekly.auto %>%
   forecast() %>%
@@ -135,7 +135,7 @@ adf.test(ts_rand)
 ARIMA_model_weekly.quadra.auto <- auto.arima(ts_rand)
 ARIMA_model_weekly.quadra.auto %>% arimaorder()
 ARIMA_model_weekly.quadra.auto %>% summary()
-ARIMA_model_weekly.quadra.auto %>% autoplot()
+ARIMA_model_weekly.quadra.auto %>% autoplot() + labs(title = "ARIMA(1,1,1)")
 ARIMA_model_weekly.quadra.auto %>% checkresiduals()
 ARIMA_model_weekly.quadra.auto %>%
   forecast() %>%
